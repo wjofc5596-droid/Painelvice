@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel de Transcrições</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #222; color: #eee; padding: 20px; }
+    h1 { color: #ffcc00; }
+    a { color: #00ccff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    ul { list-style: none; padding: 0; }
+    li { margin: 8px 0; }
+  </style>
+</head>
+<body>
+  <h1>📜 Painel de Transcrições</h1>
+  <p>Selecione uma transcrição abaixo:</p>
+  <ul id="lista"></ul>
+
+  <script>
+    // Este script funciona em hospedagens que permitem listar diretórios (como GitHub Pages com index gerado)
+    // Se não funcionar, você pode gerar manualmente a lista via bot ou CI/CD.
+    fetch('transcricoes/')
+      .then(response => response.text())
+      .then(data => {
+        const lista = document.getElementById('lista');
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(data, 'text/html');
+        doc.querySelectorAll('a').forEach(link => {
+          if (link.href.endsWith('.html')) {
+            const li = document.createElement('li');
+            li.innerHTML = `<a href="transcricoes/${link.textContent}">${link.textContent}</a>`;
+            lista.appendChild(li);
+          }
+        });
+      })
+      .catch(() => {
+        document.getElementById('lista').innerHTML = "<li>⚠️ Nenhuma transcrição encontrada.</li>";
+      });
+  </script>
+</body>
+</html>
